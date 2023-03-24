@@ -1,11 +1,15 @@
-import { useCallback } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
-import * as SplashScreen from 'expo-splash-screen'
+import * as SplashScreen from 'expo-splash-screen';
+import userAuth from "../hook/userAuth";
 
 SplashScreen.preventAutoHideAsync();
 
 const Layout = () => {
+    const [loading, setLoading] = useState(true);
+    const { currentUser } = userAuth();
+
     const [fontsLoaded] = useFonts({
         DMBold: require("../assets/fonts/DMSans-Bold.ttf"),
         DMMedium: require("../assets/fonts/DMSans-Medium.ttf"),
@@ -22,9 +26,12 @@ const Layout = () => {
         return null;
     }
 
-    return <Stack initialRouteName="home" onlayOut={onLayoutRootView}>
-        <Stack.Screen name="home" />
-    </Stack>;
+    return (
+        <Stack initialRouteName="manageUser" onlayOut={onLayoutRootView}>
+            <Stack.Screen name="home" />
+            <Stack.Screen name="manageUser" />
+        </Stack>
+    );
 }
 
 export default Layout;

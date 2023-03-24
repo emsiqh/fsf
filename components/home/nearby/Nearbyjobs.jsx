@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useRouter } from "expo-router";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 

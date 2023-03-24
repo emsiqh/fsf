@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, SafeAreaView, ScrollView } from 'react-native';
 import { Stack, useRouter } from "expo-router";
 
@@ -9,10 +9,22 @@ import {
     ScreenHeaderBtn,
     Welcome,
 } from "../components";
+import userAuth from "../hook/userAuth";
 
 const Home = () => {
-    const router = useRouter()
+    const { currentUser } = userAuth();
+    console.log(currentUser);
+    const router = useRouter();
     const [searchTerm, setSearchTerm] = useState("");
+
+    const [showJobs, setShowJobs] = useState(false);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setShowJobs(true);
+        }, 3000);
+        return () => clearTimeout(timeout);
+    }, []);
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
@@ -21,7 +33,23 @@ const Home = () => {
                     headerStyle: { backgroundColor: COLORS.lightWhite },
                     headerShadowVisible: false,
                     headerLeft: () => (<ScreenHeaderBtn iconUrl={icons.menu} dimension="60%" />),
-                    headerRight: () => (<ScreenHeaderBtn iconUrl={images.profile} dimension="100%" />),
+                    headerRight: () => (
+                        // Only render the `ScreenHeaderBtn` component if the user is logged in
+                        !currentUser ? (
+                            <ScreenHeaderBtn
+                                iconUrl={images.profile}
+                                dimension="100%"
+                                handlePress={() => router.push(`/login`)}
+                            />
+                        ) : (
+                            <ScreenHeaderBtn
+                                iconUrl={images.profile}
+                                dimension="100%"
+                                handlePress={() => { }}
+                            />
+                        )
+                    )
+                    ,
                     headerTitle: "",
                 }}
             >
@@ -39,7 +67,9 @@ const Home = () => {
                         }}
                     />
                     <Popularjobs />
-                    <Nearbyjobs />
+                    {
+                        showJobs ? <Nearbyjobs /> : <></>
+                    }
                 </View>
             </ScrollView>
         </SafeAreaView>
